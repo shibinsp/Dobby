@@ -1,4 +1,5 @@
 export type TaskStatus = "pending" | "in_progress" | "completed";
+export const TASK_STATUS_VALUES: TaskStatus[] = ["pending", "in_progress", "completed"];
 
 export interface TaskRecord {
   id: string;

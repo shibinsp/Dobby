@@ -43,6 +43,13 @@ class PlanService {
     await storage.writeState({ plan: updatedPlan });
     return updatedPlan;
   }
+
+  async resetPlan(): Promise<boolean> {
+    const state = await storage.readState();
+    const hadPlan = Boolean(state.plan);
+    await storage.reset();
+    return hadPlan;
+  }
 }
 
 export const planService = new PlanService();

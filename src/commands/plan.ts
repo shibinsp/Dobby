@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { planService } from "../services/planService";
-import { logger } from "../utils/logger";
+import { formatTask, logger } from "../utils/logger";
 import { PlanRecord } from "../types/plan";
 
 const collectMilestone = (value: string, previous: string[]): string[] => {
@@ -10,14 +10,23 @@ const collectMilestone = (value: string, previous: string[]): string[] => {
 
 function renderPlan(plan: PlanRecord): void {
   logger.info(`${chalk.bold(plan.name)}${plan.description ? ` — ${plan.description}` : ""}`);
-  logger.info(`Milestones (${plan.milestones.length}):`);
-  plan.milestones.forEach((milestone, index) => {
-    logger.info(`  ${index + 1}. ${milestone}`);
-  });
-  logger.info(`Tasks (${plan.tasks.length}):`);
-  plan.tasks.forEach((task, index) => {
-    logger.info(`  ${index + 1}. [${task.status}] ${task.title}`);
-  });
+  logger.info(chalk.gray(`Last updated ${new Date(plan.updatedAt).toLocaleString()}`));
+  logger.info(`Milestones (${plan.milestones.length || 0}):`);
+  if (plan.milestones.length === 0) {
+    logger.info("  (none)");
+  } else {
+    plan.milestones.forEach((milestone, index) => {
+      logger.info(`  ${index + 1}. ${milestone}`);
+    });
+  }
+  logger.info(`Tasks (${plan.tasks.length || 0}):`);
+  if (plan.tasks.length === 0) {
+    logger.info("  (none)");
+  } else {
+    plan.tasks.forEach((task, index) => {
+      logger.info(`  ${formatTask(task, { index, includeId: true })}`);
+    });
+  }
 }
 
 export const registerPlanCommands = (program: Command): void => {
@@ -56,5 +65,17 @@ export const registerPlanCommands = (program: Command): void => {
         return;
       }
       renderPlan(planRecord);
+    });
+
+  plan
+    .command("reset")
+    .description("Remove the current plan and tasks")
+    .action(async () => {
+      const hadPlan = await planService.resetPlan();
+      if (hadPlan) {
+        logger.success("Plan reset. Start again with `dobby plan init`.");
+      } else {
+        logger.warn("No plan found. Nothing to reset.");
+      }
     });
 };
