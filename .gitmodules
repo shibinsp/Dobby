@@ -1,0 +1,3 @@
+[submodule "vendor/forgecode"]
+	path = vendor/forgecode
+	url = https://github.com/antinomyhq/forgecode.git

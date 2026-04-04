@@ -10,7 +10,8 @@
     "build": "tsc --pretty",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "start": "ts-node src/index.ts",
-    "test": "echo \"No tests defined yet\""
+    "test": "echo \"No tests defined yet\"",
+    "forge:build": "cargo build --release --manifest-path vendor/forgecode/Cargo.toml"
   },
   "keywords": [
     "dobby",

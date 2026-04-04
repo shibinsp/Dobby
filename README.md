@@ -17,6 +17,14 @@ Or run it ad-hoc without a global install:
 npx dobby-cli plan show
 ```
 
+## Forge integration
+Dobby now vendors the entire [antinomyhq/forgecode](https://github.com/antinomyhq/forgecode) tree under `vendor/forgecode` and delegates every command outside of `plan`/`task` to the real Forge binary. This gives you immediate access to commands such as `provider login`, `workspace sync`, `conversation list`, etc., without re-implementing them in TypeScript.
+
+1. Pull the submodule after cloning: `git submodule update --init --recursive`
+2. Install the prerequisites: a Rust toolchain (`cargo`) and Protocol Buffers (`brew install protobuf` on macOS, or download from https://github.com/protocolbuffers/protobuf/releases).
+3. Compile Forge once with `npm run forge:build` (or let `dobby` build it automatically the first time you run a delegated command).
+4. Run any Forge command through Dobby, for example `dobby provider list` or `dobby` for the interactive shell. Dobby-native workflows (`plan`/`task`) continue to work as before.
+
 ## Usage
 
 ### Plan commands
