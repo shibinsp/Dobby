@@ -1,0 +1,35 @@
+{
+  "name": "dobby-cli",
+  "version": "0.1.0",
+  "description": "Dobby CLI brings Forge-like planning workflows to the terminal",
+  "main": "dist/index.js",
+  "bin": {
+    "dobby": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc --pretty",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "start": "ts-node src/index.ts",
+    "test": "echo \"No tests defined yet\""
+  },
+  "keywords": [
+    "dobby",
+    "cli",
+    "automation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^14.0.3",
+    "fs-extra": "^11.3.4"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^25.5.2",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^6.0.2"
+  }
+}
