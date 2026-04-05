@@ -3,3 +3,5 @@ node_modules
 /dist
 .env
 forge-data.json
+/target
+/vendor/forgecode/target

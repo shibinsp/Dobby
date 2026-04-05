@@ -1,29 +1,35 @@
 # Dobby CLI
 
-Dobby CLI is a Forge-inspired workflow assistant that helps you capture implementation plans and track coding tasks without leaving the terminal. Plans and tasks are stored locally so you can pick up where you left off across sessions.
+Dobby CLI is a Forge-compatible workflow assistant implemented entirely in Rust. It layers focused planning and task management commands on top of the upstream Forge experience, so you can capture implementation intent and still access every Forge feature from a single binary.
 
 ## Key capabilities
-- **Plan scaffolding** – capture a project name, description, and milestones with `dobby plan init`, then review the current blueprint with `dobby plan show`.
+- **Plan scaffolding** – capture a project name, description, and milestones with `dobby plan init`, then inspect the live blueprint with `dobby plan show`.
 - **Task tracking** – add work items, filter by status, and update progress via human-friendly IDs or simple list indexes.
-- **Stateful workflows** – data lives in `~/.dobby-cli/state.json`, so every command builds on the same source of truth until you reset it.
+- **Stateful workflows** – plan and task data lives in `~/.dobby-cli/state.json`, so every session resumes from the same source of truth until you reset it.
+- **Forge delegation** – any command outside of `plan`/`task` is forwarded to the vendored Forge binary, exposing 100% of the upstream CLI (agents, providers, workspaces, conversations, etc.).
 
 ## Installation
+Build the CLI directly from this repository:
+
 ```bash
-npm install -g dobby-cli
+cargo install --path .
 ```
 
-Or run it ad-hoc without a global install:
+Or run it ad-hoc without installing:
+
 ```bash
-npx dobby-cli plan show
+cargo run -- plan show
 ```
+
+The compiled binary lives at `target/release/dobby` (or `target/debug/dobby` when using `cargo run`).
 
 ## Forge integration
-Dobby now vendors the entire [antinomyhq/forgecode](https://github.com/antinomyhq/forgecode) tree under `vendor/forgecode` and delegates every command outside of `plan`/`task` to the real Forge binary. This gives you immediate access to commands such as `provider login`, `workspace sync`, `conversation list`, etc., without re-implementing them in TypeScript.
+Dobby vendors the entire [antinomyhq/forgecode](https://github.com/antinomyhq/forgecode) tree under `vendor/forgecode` and delegates every non-`plan`/`task` command to the real Forge binary. To keep the delegation path working:
 
 1. Pull the submodule after cloning: `git submodule update --init --recursive`
-2. Install the prerequisites: a Rust toolchain (`cargo`) and Protocol Buffers (`brew install protobuf` on macOS, or download from https://github.com/protocolbuffers/protobuf/releases).
-3. Compile Forge once with `npm run forge:build` (or let `dobby` build it automatically the first time you run a delegated command).
-4. Run any Forge command through Dobby, for example `dobby provider list` or `dobby` for the interactive shell. Dobby-native workflows (`plan`/`task`) continue to work as before.
+2. Install prerequisites: a Rust toolchain (`rustup`) and Protocol Buffers (`brew install protobuf` on macOS, or download from https://github.com/protocolbuffers/protobuf/releases).
+3. Compile Forge once with `cargo build --release --manifest-path vendor/forgecode/Cargo.toml` (or let `dobby` build it automatically the first time you run a delegated command).
+4. Invoke any Forge command through Dobby, e.g. `dobby provider list` or `dobby` for the interactive shell. Dobby-native workflows (`plan`/`task`) continue to run directly inside this binary.
 
 ## Usage
 
@@ -43,11 +49,24 @@ Dobby now vendors the entire [antinomyhq/forgecode](https://github.com/antinomyh
 
 > **Tip:** Run `dobby plan show` or `dobby task list` to grab the colored IDs shown next to each task before updating their status.
 
+### Delegated Forge commands
+Any other invocation is proxied to the Forge binary. For example:
+
+```bash
+# Launch Forge's interactive shell
+dobby
+
+# List configured providers via Forge
+dobby provider list
+```
+
 ## Development workflow
-1. Install dependencies: `npm install`
-2. Start iterating with live reload: `npm run dev`
-3. Compile once you're ready to distribute: `npm run build`
+1. Install dependencies: `rustup target add` (as needed) and `cargo fetch`
+2. Format & lint: `cargo fmt && cargo clippy`
+3. Compile: `cargo build`
+4. Exercise flows locally: `cargo run -- plan show` or `cargo run -- provider list`
 
 ## Troubleshooting
 - **Plan already exists:** Reset with `dobby plan reset` before re-running `plan init`.
-- **"No task matched" errors:** Double-check the task ID or use the list index when updating statuses.
+- **`No task matches identifier` errors:** Double-check the task ID or use the list index when updating statuses.
+- **Forge build failures:** Confirm Rust (`cargo`) and Protocol Buffers (`protoc`) are installed, then rerun `git submodule update --init --recursive` followed by `cargo build --release --manifest-path vendor/forgecode/Cargo.toml`.
