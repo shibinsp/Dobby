@@ -9,14 +9,20 @@ Dobby CLI is a Forge-compatible workflow assistant implemented entirely in Rust.
 - **Forge delegation** – any command outside of `plan`/`task` is forwarded to the vendored Forge binary, exposing 100% of the upstream CLI (agents, providers, workspaces, conversations, etc.).
 
 ## Installation
-Build the CLI directly from this repository:
+Build the CLI directly from this repository.
 
+### Prerequisites
+- A Rust toolchain via [`rustup`](https://rustup.rs/)
+- Protocol Buffers (`brew install protobuf` on macOS or download from the official releases page)
+- Git submodules initialized (`git submodule update --init --recursive`)
+
+### Install once and reuse
 ```bash
 cargo install --path .
 ```
+This places the `dobby` binary in `~/.cargo/bin`, making it available anywhere on your system.
 
-Or run it ad-hoc without installing:
-
+### Run ad-hoc without installing
 ```bash
 cargo run -- plan show
 ```
@@ -65,6 +71,23 @@ dobby provider list
 2. Format & lint: `cargo fmt && cargo clippy`
 3. Compile: `cargo build`
 4. Exercise flows locally: `cargo run -- plan show` or `cargo run -- provider list`
+
+## Testing
+Run the standard Rust checks before shipping changes:
+
+```bash
+cargo fmt --check
+cargo clippy -- -D warnings
+cargo test
+```
+
+Validate end-to-end behavior by running representative commands (swap `cargo run --` with the installed `dobby` binary if you've already installed it):
+
+```bash
+cargo run -- plan init -n "Demo" -m "First milestone"
+cargo run -- task add "Wire up persistence"
+cargo run -- task list
+```
 
 ## Troubleshooting
 - **Plan already exists:** Reset with `dobby plan reset` before re-running `plan init`.
