@@ -2,6 +2,15 @@
 
 Dobby CLI is a Forge-compatible workflow assistant implemented entirely in Rust. It layers focused planning and task management commands on top of the upstream Forge experience, so you can capture implementation intent and still access every Forge feature from a single binary.
 
+## Quickstart
+Install or update the CLI with a single command (mirroring Forge's installer):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/shibinsp/Dobby/main/scripts/install.sh | bash
+```
+
+This script checks for Rust tooling, fetches the latest `main` branch by default, and installs the `dobby` binary into `~/.cargo/bin`. You can pin a release or branch with environment overrides, e.g. `DOBBY_TAG=v0.1.0 curl ... | bash` (alias: `DOBBY_VERSION`).
+
 ## Key capabilities
 - **Plan scaffolding** – capture a project name, description, and milestones with `dobby plan init`, then inspect the live blueprint with `dobby plan show`.
 - **Task tracking** – add work items, filter by status, and update progress via human-friendly IDs or simple list indexes.
@@ -9,7 +18,7 @@ Dobby CLI is a Forge-compatible workflow assistant implemented entirely in Rust.
 - **Forge delegation** – any command outside of `plan`/`task` is forwarded to the vendored Forge binary, exposing 100% of the upstream CLI (agents, providers, workspaces, conversations, etc.).
 
 ## Installation
-Build the CLI directly from this repository.
+Prefer the single-command installer above? Skip to [Quickstart](#quickstart). For manual control, build the CLI directly from this repository.
 
 ### Prerequisites
 - A Rust toolchain via [`rustup`](https://rustup.rs/)
