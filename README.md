@@ -1,17 +1,19 @@
 # Dobby CLI
 
-Dobby CLI is a Forge-compatible workflow assistant implemented entirely in Rust. It layers focused planning and task management commands on top of the upstream Forge experience, so you can capture implementation intent and still access every Forge feature from a single binary.
+Dobby CLI is a Forge-compatible workflow assistant implemented entirely in Rust. It layers focused planning and task management commands on top of the upstream Forge experience, so you can capture implementation intent and still access every Forge feature from a single binary. Launching `dobby` with no arguments opens a rich terminal dashboard so you can monitor files, plan progress, and context in one place.
+
+## Interactive dashboard
+When you run `dobby` with no arguments, the binary launches a first-class terminal interface built with Ratatui:
+
+- **Workspace column (left):** shows files under the current directory so you can spot relevant artifacts quickly.
+- **Activity stream (center):** summarizes recent reasoning, task/test/doc status, and milestone callouts.
+- **Context panel (right):** displays the active plan, task counts, backlog preview, and timestamps.
+- **Footer bar:** lists common shortcuts such as `tab agents`, `ctrl+p commands`, `q`/`esc` to quit, `r` to refresh, and the `dobby --forge …` escape hatch for the upstream Forge CLI.
+
+Keyboard controls mirror popular TUIs: `j`/`k` or arrow keys navigate, `r` refreshes persisted plan/task data, and `q` or `Esc` exits back to your shell. From here you can still run targeted commands like `dobby plan show` or `dobby task list`, and `dobby --forge provider list` jumps straight into Forge when you need the legacy interface.
 
 ## Quickstart
 Install or update the CLI with a single command (mirroring Forge's installer):
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/shibinsp/Dobby/main/scripts/install.sh | bash
-```
-
-This script checks for Rust tooling, fetches the latest `main` branch by default, and installs the `dobby` binary into `~/.cargo/bin`. You can pin a release or branch with environment overrides, e.g. `DOBBY_TAG=v0.1.0 curl ... | bash` (alias: `DOBBY_VERSION`).
-
-## Key capabilities
 - **Plan scaffolding** – capture a project name, description, and milestones with `dobby plan init`, then inspect the live blueprint with `dobby plan show`.
 - **Task tracking** – add work items, filter by status, and update progress via human-friendly IDs or simple list indexes.
 - **Stateful workflows** – plan and task data lives in `~/.dobby-cli/state.json`, so every session resumes from the same source of truth until you reset it.

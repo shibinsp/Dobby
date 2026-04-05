@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use anyhow::{Context, Result};
 
-use crate::state::{DobbyState, PlanRecord};
+use crate::state::{ensure_default_rule, DobbyState, PlanRecord, RuleRecord};
 
 pub struct Storage {
     path: PathBuf,
@@ -20,12 +20,22 @@ impl Storage {
     }
 
     pub fn load(&self) -> Result<DobbyState> {
-        if !self.path.exists() {
-            return Ok(DobbyState::default());
+        let mut state = if !self.path.exists() {
+            DobbyState::default()
+        } else {
+            let bytes = fs::read(&self.path).context("Failed to read Dobby state file")?;
+            serde_json::from_slice(&bytes).context("Failed to parse Dobby state file")?
+        };
+
+        let mut changed = false;
+        if ensure_default_rule(&mut state.rules) {
+            changed = true;
         }
-        let bytes = fs::read(&self.path).context("Failed to read Dobby state file")?;
-        let state: DobbyState =
-            serde_json::from_slice(&bytes).context("Failed to parse Dobby state file")?;
+
+        if changed {
+            self.save(&state)?;
+        }
+
         Ok(state)
     }
 
